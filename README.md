@@ -12,7 +12,13 @@ La ruta **no tiene fin**: después de la última estación el bus vuelve a la pr
           └──────────── prev ────────────┘
 ```
 
-## ▶️ Cómo ejecutarlo
+## 🌐 Ver en línea
+
+**https://alex098710.github.io/listas-circulares-dobles---bus/**
+
+En GitHub Pages el mismo código Python corre dentro del navegador con [Pyodide](https://pyodide.org). La primera carga tarda unos segundos.
+
+## ▶️ Cómo ejecutarlo en tu computador
 
 Solo necesitas Python 3.9 o superior (no hay que instalar librerías).
 
@@ -21,6 +27,8 @@ python server.py
 ```
 
 Se abre el navegador en **http://localhost:5051**.
+
+Para abrirlo desde un celular conectado al mismo WiFi: `python server.py --lan`.
 
 Pruebas unitarias:
 
@@ -33,7 +41,9 @@ python -m unittest -v
 | Archivo | Contenido |
 |---|---|
 | `bus_route.py` | Clase `Station` (nodo) y clase `CircularRoute` (lista circular doble) |
-| `server.py` | Servidor web con la API JSON (librería estándar de Python) |
+| `api.py` | Acciones que puede pedir la página (las usa el servidor y la versión en línea) |
+| `server.py` | Servidor web local (librería estándar de Python) |
+| `index.html` | Entrada para GitHub Pages |
 | `static/` | Interfaz en español (HTML, CSS y JavaScript) |
 | `test_bus_route.py` | Pruebas unitarias |
 

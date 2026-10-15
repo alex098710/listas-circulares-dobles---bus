@@ -36,12 +36,7 @@ function showToast(message, isError = false) {
 }
 
 async function api(action, body = {}) {
-  const response = await fetch(`/api/${action}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  const data = await response.json();
+  const data = await backend.request(action, body);
   if (data.error) showToast(data.error, true);
   return data;
 }
@@ -317,4 +312,4 @@ svg.innerHTML = `
     <circle class="wheel" cx="-14" cy="14" r="4"/><circle class="wheel" cx="14" cy="14" r="4"/>
   </g>`;
 
-fetch("/api/state").then((r) => r.json()).then((data) => render(data));
+backend.state().then((data) => render(data));
