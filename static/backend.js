@@ -1,12 +1,21 @@
 // Talks to the Python code in one of two ways:
 //  - local server (python server.py): normal HTTP requests to /api/...
-//  - GitHub Pages: the same .py files run inside the browser with Pyodide
+//  - static hosting (Vercel, GitHub Pages): the same .py files run inside
+//    the browser with Pyodide
 const PYODIDE_URL = "https://cdn.jsdelivr.net/pyodide/v0.27.5/full/";
 const PYTHON_FILES = document.currentScript.dataset.modules.split(" ");
-const IN_BROWSER =
-  location.hostname.endsWith("github.io") ||
-  location.protocol === "file:" ||
-  new URLSearchParams(location.search).get("python") === "browser";
+
+async function hasLocalServer() {
+  if (location.protocol === "file:" || new URLSearchParams(location.search).get("python") === "browser") {
+    return false;
+  }
+  try {
+    const response = await fetch("/api/state");
+    return (response.headers.get("Content-Type") || "").includes("application/json");
+  } catch {
+    return false;
+  }
+}
 
 function loadScript(src) {
   return new Promise((resolve, reject) => {
@@ -57,15 +66,18 @@ def call(action, body):
   return (action, body) => JSON.parse(call(action, JSON.stringify(body)));
 }
 
-const pythonReady = IN_BROWSER ? startPyodide() : null;
+// resolves to a Python caller in Pyodide mode, or null when the local server answers
+const pythonReady = hasLocalServer().then((server) => (server ? null : startPyodide()));
 
 window.backend = {
   async state() {
-    if (pythonReady) return (await pythonReady)("state", {});
+    const python = await pythonReady;
+    if (python) return python("state", {});
     return fetch("/api/state").then((r) => r.json());
   },
   async request(action, body = {}) {
-    if (pythonReady) return (await pythonReady)(action, body);
+    const python = await pythonReady;
+    if (python) return python(action, body);
     const response = await fetch(`/api/${action}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
