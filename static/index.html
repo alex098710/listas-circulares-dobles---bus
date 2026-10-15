@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ruta Circular de Bus</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="logo">🚌</span>
+      <div>
+        <h1>Ruta Circular de Bus</h1>
+        <p>Lista circular doble: cada estación conoce la siguiente (<code>next</code>) y la anterior (<code>prev</code>). La ruta nunca termina y el bus puede ir en los dos sentidos.</p>
+      </div>
+    </div>
+    <button id="btn-reset" class="ghost">Reiniciar ruta</button>
+  </header>
+
+  <main>
+    <section class="board">
+      <svg id="map" viewBox="-310 -310 620 620" aria-label="Mapa de la ruta circular"></svg>
+      <div class="stats">
+        <div><span id="st-bus">—</span><small>Bus en</small></div>
+        <div><span id="st-board">0</span><small>A bordo</small></div>
+        <div><span id="st-delivered">0</span><small>Entregados</small></div>
+        <div><span id="st-size">0</span><small>Estaciones</small></div>
+      </div>
+      <div id="toast" role="status"></div>
+    </section>
+
+    <aside class="panel">
+      <div class="card">
+        <h2>Conducir el bus</h2>
+        <div class="drive">
+          <button data-action="backward">⬅️ Anterior <small>prev</small></button>
+          <button data-action="forward">Siguiente ➡️ <small>next</small></button>
+        </div>
+        <button data-action="passengers" class="ghost wide">👥 Generar pasajeros</button>
+      </div>
+
+      <div class="card">
+        <h2>Planear viaje (ruta más corta)</h2>
+        <div class="row">
+          <label>Origen <select id="in-origin"></select></label>
+          <label>Destino <select id="in-target"></select></label>
+        </div>
+        <div id="plan" class="plan"><p class="hint">Elige origen y destino, o haz clic en una estación del mapa.</p></div>
+        <button id="btn-travel" class="wide">🧭 Llevar el bus al destino</button>
+      </div>
+
+      <div class="card">
+        <h2>Estaciones (insertar / eliminar nodo)</h2>
+        <form id="form-add">
+          <input id="in-name" placeholder="Nombre de la estación" maxlength="16" required>
+          <div class="row">
+            <label>Pasajeros <input id="in-waiting" type="number" min="0" max="99" value="0"></label>
+            <label>Posición <select id="in-after"></select></label>
+          </div>
+          <button type="submit">➕ Abrir estación</button>
+        </form>
+        <div class="row close-row">
+          <select id="in-close"></select>
+          <button id="btn-close" class="danger">⛔ Cerrar</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Recorrido de la lista</h2>
+        <p class="trav"><span class="tag">next →</span> <span id="trav-next"></span></p>
+        <p class="trav"><span class="tag">← prev</span> <span id="trav-prev"></span></p>
+        <details>
+          <summary>Ver punteros de cada nodo</summary>
+          <table>
+            <thead><tr><th>prev</th><th>Estación</th><th>next</th><th>Esperan</th></tr></thead>
+            <tbody id="pointers"></tbody>
+          </table>
+        </details>
+        <h2 class="mt">Bitácora</h2>
+        <ul id="log"></ul>
+      </div>
+    </aside>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
